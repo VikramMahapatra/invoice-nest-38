@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ProductsRouteImport } from './routes/products'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CustomersRouteImport } from './routes/customers'
@@ -17,6 +18,11 @@ import { Route as InvoicesIndexRouteImport } from './routes/invoices.index'
 import { Route as InvoicesNewRouteImport } from './routes/invoices.new'
 import { Route as InvoicesIdRouteImport } from './routes/invoices.$id'
 
+const ProductsRoute = ProductsRouteImport.update({
+  id: '/products',
+  path: '/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/customers': typeof CustomersRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/products': typeof ProductsRoute
   '/invoices/$id': typeof InvoicesIdRoute
   '/invoices/new': typeof InvoicesNewRoute
   '/invoices/': typeof InvoicesIndexRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/customers': typeof CustomersRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/products': typeof ProductsRoute
   '/invoices/$id': typeof InvoicesIdRoute
   '/invoices/new': typeof InvoicesNewRoute
   '/invoices': typeof InvoicesIndexRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/customers': typeof CustomersRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/products': typeof ProductsRoute
   '/invoices/$id': typeof InvoicesIdRoute
   '/invoices/new': typeof InvoicesNewRoute
   '/invoices/': typeof InvoicesIndexRoute
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
     | '/customers'
     | '/login'
     | '/onboarding'
+    | '/products'
     | '/invoices/$id'
     | '/invoices/new'
     | '/invoices/'
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/customers'
     | '/login'
     | '/onboarding'
+    | '/products'
     | '/invoices/$id'
     | '/invoices/new'
     | '/invoices'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/customers'
     | '/login'
     | '/onboarding'
+    | '/products'
     | '/invoices/$id'
     | '/invoices/new'
     | '/invoices/'
@@ -116,6 +128,7 @@ export interface RootRouteChildren {
   CustomersRoute: typeof CustomersRoute
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
+  ProductsRoute: typeof ProductsRoute
   InvoicesIdRoute: typeof InvoicesIdRoute
   InvoicesNewRoute: typeof InvoicesNewRoute
   InvoicesIndexRoute: typeof InvoicesIndexRoute
@@ -123,6 +136,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/products': {
+      id: '/products'
+      path: '/products'
+      fullPath: '/products'
+      preLoaderRoute: typeof ProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -180,6 +200,7 @@ const rootRouteChildren: RootRouteChildren = {
   CustomersRoute: CustomersRoute,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
+  ProductsRoute: ProductsRoute,
   InvoicesIdRoute: InvoicesIdRoute,
   InvoicesNewRoute: InvoicesNewRoute,
   InvoicesIndexRoute: InvoicesIndexRoute,
