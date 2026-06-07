@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RecurringRouteImport } from './routes/recurring'
+import { Route as QuotationsRouteImport } from './routes/quotations'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as PaymentsRouteImport } from './routes/payments'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
@@ -24,6 +25,11 @@ import { Route as InvoicesIdRouteImport } from './routes/invoices.$id'
 const RecurringRoute = RecurringRouteImport.update({
   id: '/recurring',
   path: '/recurring',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuotationsRoute = QuotationsRouteImport.update({
+  id: '/quotations',
+  path: '/quotations',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProductsRoute = ProductsRouteImport.update({
@@ -85,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/payments': typeof PaymentsRoute
   '/products': typeof ProductsRoute
+  '/quotations': typeof QuotationsRoute
   '/recurring': typeof RecurringRoute
   '/invoices/$id': typeof InvoicesIdRoute
   '/invoices/new': typeof InvoicesNewRoute
@@ -98,6 +105,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/payments': typeof PaymentsRoute
   '/products': typeof ProductsRoute
+  '/quotations': typeof QuotationsRoute
   '/recurring': typeof RecurringRoute
   '/invoices/$id': typeof InvoicesIdRoute
   '/invoices/new': typeof InvoicesNewRoute
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/payments': typeof PaymentsRoute
   '/products': typeof ProductsRoute
+  '/quotations': typeof QuotationsRoute
   '/recurring': typeof RecurringRoute
   '/invoices/$id': typeof InvoicesIdRoute
   '/invoices/new': typeof InvoicesNewRoute
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/payments'
     | '/products'
+    | '/quotations'
     | '/recurring'
     | '/invoices/$id'
     | '/invoices/new'
@@ -140,6 +150,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/payments'
     | '/products'
+    | '/quotations'
     | '/recurring'
     | '/invoices/$id'
     | '/invoices/new'
@@ -153,6 +164,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/payments'
     | '/products'
+    | '/quotations'
     | '/recurring'
     | '/invoices/$id'
     | '/invoices/new'
@@ -167,6 +179,7 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   PaymentsRoute: typeof PaymentsRoute
   ProductsRoute: typeof ProductsRoute
+  QuotationsRoute: typeof QuotationsRoute
   RecurringRoute: typeof RecurringRoute
   InvoicesIdRoute: typeof InvoicesIdRoute
   InvoicesNewRoute: typeof InvoicesNewRoute
@@ -180,6 +193,13 @@ declare module '@tanstack/react-router' {
       path: '/recurring'
       fullPath: '/recurring'
       preLoaderRoute: typeof RecurringRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quotations': {
+      id: '/quotations'
+      path: '/quotations'
+      fullPath: '/quotations'
+      preLoaderRoute: typeof QuotationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/products': {
@@ -263,6 +283,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   PaymentsRoute: PaymentsRoute,
   ProductsRoute: ProductsRoute,
+  QuotationsRoute: QuotationsRoute,
   RecurringRoute: RecurringRoute,
   InvoicesIdRoute: InvoicesIdRoute,
   InvoicesNewRoute: InvoicesNewRoute,
