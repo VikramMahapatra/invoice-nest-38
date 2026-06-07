@@ -19,6 +19,8 @@ const nav = [
   { to: "/expenses", label: "Expenses", icon: Receipt },
   { to: "/recurring", label: "Recurring", icon: Repeat },
   { to: "/notes", label: "Credit / Debit", icon: StickyNote },
+  { to: "/gstr1", label: "GSTR-1 Report", icon: FileBarChart2 },
+  { to: "/gstr3b", label: "GSTR-3B Summary", icon: Landmark },
   { to: "/staff", label: "Staff & Roles", icon: Shield },
 ];
 
