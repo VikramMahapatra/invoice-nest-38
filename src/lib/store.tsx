@@ -110,7 +110,7 @@ type Store = {
   products: Product[];
   addProduct: (p: Omit<Product, "id">) => Product;
   invoices: Invoice[];
-  addInvoice: (i: Omit<Invoice, "id" | "number" | "payments" | "status" | "createdBy"> & { number?: string; kind?: InvoiceKind; refInvoice?: string }) => Invoice;
+  addInvoice: (i: Omit<Invoice, "id" | "number" | "payments" | "status" | "createdBy" | "kind" | "refInvoice"> & { number?: string; kind?: InvoiceKind; refInvoice?: string }) => Invoice;
   updateInvoice: (id: string, patch: Partial<Invoice>) => void;
   recordPayment: (invoiceId: string, p: Omit<Payment, "id">) => void;
   expenses: Expense[];
