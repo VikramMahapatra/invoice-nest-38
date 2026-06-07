@@ -2,7 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard, FileText, Users, Package, Wallet, Receipt,
   Repeat, FileCheck2, StickyNote, Shield, Menu, Bell, Plus,
-  ChevronDown, Search, X,
+  ChevronDown, Search, X, FileBarChart2, Landmark,
 } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { useStore, rolePermissions, type Role } from "@/lib/store";
