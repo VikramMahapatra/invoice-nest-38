@@ -247,7 +247,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         number, kind, refInvoice: i.refInvoice,
         customerId: i.customerId, date: i.date, dueDate: i.dueDate, items: i.items, notes: i.notes,
         payments: [], status: "Draft",
-        createdBy: staff.find((s) => s.role === currentRole)?.name + " (" + currentRole + ")" ?? "Owner",
+        createdBy: (staff.find((s) => s.role === currentRole)?.name ?? "Owner") + " (" + currentRole + ")",
       };
       setInvoices((x) => [inv, ...x]);
       setInvSeq((s) => ({ ...s, [kind]: s[kind] + 1 }));
