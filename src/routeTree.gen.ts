@@ -14,6 +14,7 @@ import { Route as QuotationsRouteImport } from './routes/quotations'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as PaymentsRouteImport } from './routes/payments'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as NotesRouteImport } from './routes/notes'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ExpensesRouteImport } from './routes/expenses'
 import { Route as CustomersRouteImport } from './routes/customers'
@@ -45,6 +46,11 @@ const PaymentsRoute = PaymentsRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotesRoute = NotesRouteImport.update({
+  id: '/notes',
+  path: '/notes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/customers': typeof CustomersRoute
   '/expenses': typeof ExpensesRoute
   '/login': typeof LoginRoute
+  '/notes': typeof NotesRoute
   '/onboarding': typeof OnboardingRoute
   '/payments': typeof PaymentsRoute
   '/products': typeof ProductsRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/customers': typeof CustomersRoute
   '/expenses': typeof ExpensesRoute
   '/login': typeof LoginRoute
+  '/notes': typeof NotesRoute
   '/onboarding': typeof OnboardingRoute
   '/payments': typeof PaymentsRoute
   '/products': typeof ProductsRoute
@@ -117,6 +125,7 @@ export interface FileRoutesById {
   '/customers': typeof CustomersRoute
   '/expenses': typeof ExpensesRoute
   '/login': typeof LoginRoute
+  '/notes': typeof NotesRoute
   '/onboarding': typeof OnboardingRoute
   '/payments': typeof PaymentsRoute
   '/products': typeof ProductsRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/customers'
     | '/expenses'
     | '/login'
+    | '/notes'
     | '/onboarding'
     | '/payments'
     | '/products'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/customers'
     | '/expenses'
     | '/login'
+    | '/notes'
     | '/onboarding'
     | '/payments'
     | '/products'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/customers'
     | '/expenses'
     | '/login'
+    | '/notes'
     | '/onboarding'
     | '/payments'
     | '/products'
@@ -176,6 +188,7 @@ export interface RootRouteChildren {
   CustomersRoute: typeof CustomersRoute
   ExpensesRoute: typeof ExpensesRoute
   LoginRoute: typeof LoginRoute
+  NotesRoute: typeof NotesRoute
   OnboardingRoute: typeof OnboardingRoute
   PaymentsRoute: typeof PaymentsRoute
   ProductsRoute: typeof ProductsRoute
@@ -221,6 +234,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notes': {
+      id: '/notes'
+      path: '/notes'
+      fullPath: '/notes'
+      preLoaderRoute: typeof NotesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -280,6 +300,7 @@ const rootRouteChildren: RootRouteChildren = {
   CustomersRoute: CustomersRoute,
   ExpensesRoute: ExpensesRoute,
   LoginRoute: LoginRoute,
+  NotesRoute: NotesRoute,
   OnboardingRoute: OnboardingRoute,
   PaymentsRoute: PaymentsRoute,
   ProductsRoute: ProductsRoute,
