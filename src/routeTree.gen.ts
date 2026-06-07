@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StaffRouteImport } from './routes/staff'
 import { Route as RecurringRouteImport } from './routes/recurring'
 import { Route as QuotationsRouteImport } from './routes/quotations'
 import { Route as ProductsRouteImport } from './routes/products'
@@ -23,6 +24,11 @@ import { Route as InvoicesIndexRouteImport } from './routes/invoices.index'
 import { Route as InvoicesNewRouteImport } from './routes/invoices.new'
 import { Route as InvoicesIdRouteImport } from './routes/invoices.$id'
 
+const StaffRoute = StaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RecurringRoute = RecurringRouteImport.update({
   id: '/recurring',
   path: '/recurring',
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/products': typeof ProductsRoute
   '/quotations': typeof QuotationsRoute
   '/recurring': typeof RecurringRoute
+  '/staff': typeof StaffRoute
   '/invoices/$id': typeof InvoicesIdRoute
   '/invoices/new': typeof InvoicesNewRoute
   '/invoices/': typeof InvoicesIndexRoute
@@ -115,6 +122,7 @@ export interface FileRoutesByTo {
   '/products': typeof ProductsRoute
   '/quotations': typeof QuotationsRoute
   '/recurring': typeof RecurringRoute
+  '/staff': typeof StaffRoute
   '/invoices/$id': typeof InvoicesIdRoute
   '/invoices/new': typeof InvoicesNewRoute
   '/invoices': typeof InvoicesIndexRoute
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   '/products': typeof ProductsRoute
   '/quotations': typeof QuotationsRoute
   '/recurring': typeof RecurringRoute
+  '/staff': typeof StaffRoute
   '/invoices/$id': typeof InvoicesIdRoute
   '/invoices/new': typeof InvoicesNewRoute
   '/invoices/': typeof InvoicesIndexRoute
@@ -148,6 +157,7 @@ export interface FileRouteTypes {
     | '/products'
     | '/quotations'
     | '/recurring'
+    | '/staff'
     | '/invoices/$id'
     | '/invoices/new'
     | '/invoices/'
@@ -163,6 +173,7 @@ export interface FileRouteTypes {
     | '/products'
     | '/quotations'
     | '/recurring'
+    | '/staff'
     | '/invoices/$id'
     | '/invoices/new'
     | '/invoices'
@@ -178,6 +189,7 @@ export interface FileRouteTypes {
     | '/products'
     | '/quotations'
     | '/recurring'
+    | '/staff'
     | '/invoices/$id'
     | '/invoices/new'
     | '/invoices/'
@@ -194,6 +206,7 @@ export interface RootRouteChildren {
   ProductsRoute: typeof ProductsRoute
   QuotationsRoute: typeof QuotationsRoute
   RecurringRoute: typeof RecurringRoute
+  StaffRoute: typeof StaffRoute
   InvoicesIdRoute: typeof InvoicesIdRoute
   InvoicesNewRoute: typeof InvoicesNewRoute
   InvoicesIndexRoute: typeof InvoicesIndexRoute
@@ -201,6 +214,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/staff': {
+      id: '/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof StaffRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/recurring': {
       id: '/recurring'
       path: '/recurring'
@@ -306,6 +326,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProductsRoute: ProductsRoute,
   QuotationsRoute: QuotationsRoute,
   RecurringRoute: RecurringRoute,
+  StaffRoute: StaffRoute,
   InvoicesIdRoute: InvoicesIdRoute,
   InvoicesNewRoute: InvoicesNewRoute,
   InvoicesIndexRoute: InvoicesIndexRoute,
