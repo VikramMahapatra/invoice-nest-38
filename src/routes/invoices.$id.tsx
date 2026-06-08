@@ -1,11 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, Download, Printer, Share2, MessageCircle, Mail, Wallet } from "lucide-react";
+import { ArrowLeft, Download, Printer, Share2, MessageCircle, Mail, Wallet, FileCheck2, Loader2, Truck } from "lucide-react";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 import { AppLayout, StatusBadge } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
 import { computeTotals, invoicePaid, useStore } from "@/lib/store";
 import { inr, inr2, fmtDate, today } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { QrMock } from "@/components/ComplianceVisuals";
 
 export const Route = createFileRoute("/invoices/$id")({
   head: () => ({ meta: [{ title: "Invoice · BillKhata" }] }),
@@ -15,10 +17,11 @@ export const Route = createFileRoute("/invoices/$id")({
 function InvoiceView() {
   const { id } = Route.useParams();
   const nav = useNavigate();
-  const { invoices, customers, business, recordPayment, updateInvoice } = useStore();
+  const { invoices, customers, business, recordPayment, updateInvoice, registerEInvoice } = useStore();
   const inv = invoices.find((x) => x.id === id);
   const [payOpen, setPayOpen] = useState(false);
   const [theme, setTheme] = useState<"classic" | "modern">("modern");
+  const [registering, setRegistering] = useState(false);
 
   if (!inv) {
     return (
@@ -36,6 +39,17 @@ function InvoiceView() {
   const isNote = inv.kind === "credit_note" || inv.kind === "debit_note";
 
   const documentLabel = isQuotation ? "Proforma Invoice / Quotation" : inv.kind === "credit_note" ? "Credit Note" : inv.kind === "debit_note" ? "Debit Note" : "Tax Invoice";
+  const locked = !!inv.eInvoice;
+  const isTaxInvoice = inv.kind === "invoice";
+
+  const registerIRP = () => {
+    setRegistering(true);
+    setTimeout(() => {
+      const e = registerEInvoice(inv.id);
+      setRegistering(false);
+      toast.success("e-Invoice registered with IRP", { description: `IRN ${e.irn.slice(0, 8)}…${e.irn.slice(-4)}` });
+    }, 1600);
+  };
 
   return (
     <AppLayout>
@@ -51,18 +65,42 @@ function InvoiceView() {
             {!isQuotation && !isNote && (
               <Button onClick={() => setPayOpen(true)} className="gap-1.5"><Wallet className="w-4 h-4" /> Record Payment</Button>
             )}
+            {isTaxInvoice && !inv.eInvoice && (
+              <Button variant="secondary" onClick={registerIRP} disabled={registering} className="gap-1.5">
+                {registering ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <FileCheck2 className="w-3.5 h-3.5" />}
+                {registering ? "Authenticating with IRP…" : "Register e-Invoice on IRP"}
+              </Button>
+            )}
+            {isTaxInvoice && (
+              <Link to="/eway"><Button variant="outline" size="sm" className="gap-1.5"><Truck className="w-3.5 h-3.5" /> E-Way Bill</Button></Link>
+            )}
             <Button variant="outline" size="sm" className="gap-1.5"><Printer className="w-3.5 h-3.5" /> Print</Button>
             <Button variant="outline" size="sm" className="gap-1.5"><Download className="w-3.5 h-3.5" /> PDF</Button>
             <Button variant="outline" size="sm" className="gap-1.5"><Share2 className="w-3.5 h-3.5" /> Share</Button>
           </div>
         </div>
 
+        {registering && (
+          <div className="fixed inset-0 z-40 bg-background/60 backdrop-blur-sm flex items-center justify-center">
+            <div className="bg-card border rounded-xl p-8 shadow-xl flex items-center gap-3">
+              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              <div>
+                <div className="font-semibold">Authenticating with Invoice Registration Portal…</div>
+                <div className="text-xs text-muted-foreground mt-0.5">Signing payload &amp; requesting IRN from NIC IRP</div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="grid lg:grid-cols-[320px_1fr] gap-6">
           <aside className="space-y-4">
             <div className="bg-card border rounded-xl p-5">
               <div className="text-xs text-muted-foreground">Document</div>
               <div className="font-mono font-semibold mt-1">{inv.number}</div>
-              <div className="mt-3"><StatusBadge status={inv.status} /></div>
+              <div className="mt-3 flex flex-wrap items-center gap-1.5"><StatusBadge status={inv.status} />
+                {locked && <span className="inline-flex items-center gap-1 text-[11px] font-medium text-success bg-success/10 border border-success/30 px-1.5 py-0.5 rounded-full"><FileCheck2 className="w-3 h-3" /> IRN Registered · Locked</span>}
+                {inv.eWayBill && <span className="inline-flex items-center gap-1 text-[11px] font-medium text-primary bg-primary/10 border border-primary/20 px-1.5 py-0.5 rounded-full"><Truck className="w-3 h-3" /> E-Way Active</span>}
+              </div>
 
               <dl className="mt-5 space-y-2.5 text-sm">
                 <div className="flex justify-between"><dt className="text-muted-foreground">Issue Date</dt><dd>{fmtDate(inv.date)}</dd></div>
@@ -131,8 +169,33 @@ function InvoiceView() {
                     <div className="text-sm font-medium">{fmtDate(inv.date)}</div>
                     {!isQuotation && <><div className="mt-3 text-xs text-zinc-500">Due</div><div className="text-sm font-medium">{fmtDate(inv.dueDate)}</div></>}
                     {isNote && inv.refInvoice && <><div className="mt-3 text-xs text-zinc-500">Against Invoice</div><div className="text-sm font-mono font-medium">{inv.refInvoice}</div></>}
+                    {inv.eInvoice && (
+                      <div className="mt-3 flex justify-end">
+                        <QrMock value={inv.eInvoice.irn} size={104} className="border border-zinc-200 rounded" />
+                      </div>
+                    )}
                   </div>
                 </div>
+
+                {inv.eInvoice && (
+                  <div className="mt-6 p-3 border border-zinc-200 rounded bg-zinc-50 text-xs">
+                    <div className="font-semibold text-zinc-700 uppercase tracking-wider text-[10px] mb-1">e-Invoice Authentication Details</div>
+                    <div className="grid sm:grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 font-mono">
+                      <span className="text-zinc-500">IRN</span><span className="break-all">{inv.eInvoice.irn}</span>
+                      <span className="text-zinc-500">Ack No</span><span>{inv.eInvoice.ackNo}</span>
+                      <span className="text-zinc-500">Ack Date</span><span>{inv.eInvoice.ackDate}</span>
+                    </div>
+                  </div>
+                )}
+
+                {inv.eWayBill && (
+                  <div className="mt-3 p-3 border border-zinc-200 rounded bg-zinc-50 text-xs flex items-center justify-between">
+                    <div>
+                      <div className="font-semibold text-zinc-700 uppercase tracking-wider text-[10px] mb-0.5">E-Way Bill</div>
+                      <div className="font-mono">EBN {inv.eWayBill.number} · {inv.eWayBill.mode} · {inv.eWayBill.vehicle}</div>
+                    </div>
+                  </div>
+                )}
 
                 <div className="grid sm:grid-cols-2 gap-6 mt-8 pt-6 border-t">
                   <div>
