@@ -78,7 +78,9 @@ function Expenses() {
 }
 
 function ExpenseForm({ onClose, onSave }: { onClose: () => void; onSave: (e: Omit<Expense, "id">) => void }) {
-  const [f, setF] = useState({ name: "", category: "Rent" as Expense["category"], date: today(), amount: 0, vendor: "", gstEligible: false, gstAmount: 0 });
+  const { products } = useStore();
+  const [f, setF] = useState({ name: "", category: "Rent" as Expense["category"], date: today(), amount: 0, vendor: "", gstEligible: false, gstAmount: 0, productId: products[0]?.id ?? "", qty: 0 });
+  const isStock = f.category === "Stock Purchase";
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex justify-end" onClick={onClose}>
       <div className="w-full max-w-md bg-card h-full overflow-y-auto" onClick={(e) => e.stopPropagation()}>
@@ -99,6 +101,21 @@ function ExpenseForm({ onClose, onSave }: { onClose: () => void; onSave: (e: Omi
           </div>
           <Field label="Vendor / Payee"><input value={f.vendor} onChange={(e) => setF({ ...f, vendor: e.target.value })} className="ipt" /></Field>
 
+          {isStock && (
+            <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 space-y-3">
+              <div className="text-xs font-semibold text-primary">Inventory Restock</div>
+              <Field label="Product">
+                <select value={f.productId} onChange={(e) => setF({ ...f, productId: e.target.value })} className="ipt">
+                  {products.map((p) => <option key={p.id} value={p.id}>{p.name} (Stock: {p.stock})</option>)}
+                </select>
+              </Field>
+              <Field label="Quantity Received">
+                <input type="number" value={f.qty} onChange={(e) => setF({ ...f, qty: +e.target.value })} className="ipt" />
+              </Field>
+              <p className="text-[11px] text-muted-foreground">Stock will increment by this quantity on save.</p>
+            </div>
+          )}
+
           <div>
             <label className="text-xs font-medium text-muted-foreground">GST Classification</label>
             <div className="mt-1.5 grid grid-cols-2 gap-2 p-1 bg-muted rounded-md">
@@ -116,7 +133,7 @@ function ExpenseForm({ onClose, onSave }: { onClose: () => void; onSave: (e: Omi
         </div>
         <div className="p-6 border-t flex gap-2">
           <Button variant="ghost" onClick={onClose} className="flex-1">Cancel</Button>
-          <Button onClick={() => onSave(f)} className="flex-1">Save Expense</Button>
+          <Button onClick={() => onSave(isStock ? f : { ...f, productId: undefined, qty: undefined })} className="flex-1">Save Expense</Button>
         </div>
         <style>{`.ipt { width: 100%; height: 2.5rem; padding: 0 0.75rem; border-radius: 0.375rem; border: 1px solid var(--color-input); background: var(--color-background); font-size: 0.875rem; outline: none; } .ipt:focus { box-shadow: 0 0 0 2px var(--color-ring); }`}</style>
       </div>
