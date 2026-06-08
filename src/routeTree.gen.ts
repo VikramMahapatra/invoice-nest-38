@@ -13,13 +13,16 @@ import { Route as StaffRouteImport } from './routes/staff'
 import { Route as RecurringRouteImport } from './routes/recurring'
 import { Route as QuotationsRouteImport } from './routes/quotations'
 import { Route as ProductsRouteImport } from './routes/products'
+import { Route as PnlRouteImport } from './routes/pnl'
 import { Route as PaymentsRouteImport } from './routes/payments'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as NotesRouteImport } from './routes/notes'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as InventoryRouteImport } from './routes/inventory'
 import { Route as Gstr3bRouteImport } from './routes/gstr3b'
 import { Route as Gstr1RouteImport } from './routes/gstr1'
 import { Route as ExpensesRouteImport } from './routes/expenses'
+import { Route as EwayRouteImport } from './routes/eway'
 import { Route as CustomersRouteImport } from './routes/customers'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as InvoicesIndexRouteImport } from './routes/invoices.index'
@@ -46,6 +49,11 @@ const ProductsRoute = ProductsRouteImport.update({
   path: '/products',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PnlRoute = PnlRouteImport.update({
+  id: '/pnl',
+  path: '/pnl',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PaymentsRoute = PaymentsRouteImport.update({
   id: '/payments',
   path: '/payments',
@@ -66,6 +74,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InventoryRoute = InventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Gstr3bRoute = Gstr3bRouteImport.update({
   id: '/gstr3b',
   path: '/gstr3b',
@@ -79,6 +92,11 @@ const Gstr1Route = Gstr1RouteImport.update({
 const ExpensesRoute = ExpensesRouteImport.update({
   id: '/expenses',
   path: '/expenses',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EwayRoute = EwayRouteImport.update({
+  id: '/eway',
+  path: '/eway',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CustomersRoute = CustomersRouteImport.update({
@@ -110,13 +128,16 @@ const InvoicesIdRoute = InvoicesIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/customers': typeof CustomersRoute
+  '/eway': typeof EwayRoute
   '/expenses': typeof ExpensesRoute
   '/gstr1': typeof Gstr1Route
   '/gstr3b': typeof Gstr3bRoute
+  '/inventory': typeof InventoryRoute
   '/login': typeof LoginRoute
   '/notes': typeof NotesRoute
   '/onboarding': typeof OnboardingRoute
   '/payments': typeof PaymentsRoute
+  '/pnl': typeof PnlRoute
   '/products': typeof ProductsRoute
   '/quotations': typeof QuotationsRoute
   '/recurring': typeof RecurringRoute
@@ -128,13 +149,16 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/customers': typeof CustomersRoute
+  '/eway': typeof EwayRoute
   '/expenses': typeof ExpensesRoute
   '/gstr1': typeof Gstr1Route
   '/gstr3b': typeof Gstr3bRoute
+  '/inventory': typeof InventoryRoute
   '/login': typeof LoginRoute
   '/notes': typeof NotesRoute
   '/onboarding': typeof OnboardingRoute
   '/payments': typeof PaymentsRoute
+  '/pnl': typeof PnlRoute
   '/products': typeof ProductsRoute
   '/quotations': typeof QuotationsRoute
   '/recurring': typeof RecurringRoute
@@ -147,13 +171,16 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/customers': typeof CustomersRoute
+  '/eway': typeof EwayRoute
   '/expenses': typeof ExpensesRoute
   '/gstr1': typeof Gstr1Route
   '/gstr3b': typeof Gstr3bRoute
+  '/inventory': typeof InventoryRoute
   '/login': typeof LoginRoute
   '/notes': typeof NotesRoute
   '/onboarding': typeof OnboardingRoute
   '/payments': typeof PaymentsRoute
+  '/pnl': typeof PnlRoute
   '/products': typeof ProductsRoute
   '/quotations': typeof QuotationsRoute
   '/recurring': typeof RecurringRoute
@@ -167,13 +194,16 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/customers'
+    | '/eway'
     | '/expenses'
     | '/gstr1'
     | '/gstr3b'
+    | '/inventory'
     | '/login'
     | '/notes'
     | '/onboarding'
     | '/payments'
+    | '/pnl'
     | '/products'
     | '/quotations'
     | '/recurring'
@@ -185,13 +215,16 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/customers'
+    | '/eway'
     | '/expenses'
     | '/gstr1'
     | '/gstr3b'
+    | '/inventory'
     | '/login'
     | '/notes'
     | '/onboarding'
     | '/payments'
+    | '/pnl'
     | '/products'
     | '/quotations'
     | '/recurring'
@@ -203,13 +236,16 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/customers'
+    | '/eway'
     | '/expenses'
     | '/gstr1'
     | '/gstr3b'
+    | '/inventory'
     | '/login'
     | '/notes'
     | '/onboarding'
     | '/payments'
+    | '/pnl'
     | '/products'
     | '/quotations'
     | '/recurring'
@@ -222,13 +258,16 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CustomersRoute: typeof CustomersRoute
+  EwayRoute: typeof EwayRoute
   ExpensesRoute: typeof ExpensesRoute
   Gstr1Route: typeof Gstr1Route
   Gstr3bRoute: typeof Gstr3bRoute
+  InventoryRoute: typeof InventoryRoute
   LoginRoute: typeof LoginRoute
   NotesRoute: typeof NotesRoute
   OnboardingRoute: typeof OnboardingRoute
   PaymentsRoute: typeof PaymentsRoute
+  PnlRoute: typeof PnlRoute
   ProductsRoute: typeof ProductsRoute
   QuotationsRoute: typeof QuotationsRoute
   RecurringRoute: typeof RecurringRoute
@@ -268,6 +307,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pnl': {
+      id: '/pnl'
+      path: '/pnl'
+      fullPath: '/pnl'
+      preLoaderRoute: typeof PnlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/payments': {
       id: '/payments'
       path: '/payments'
@@ -296,6 +342,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/inventory': {
+      id: '/inventory'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof InventoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/gstr3b': {
       id: '/gstr3b'
       path: '/gstr3b'
@@ -315,6 +368,13 @@ declare module '@tanstack/react-router' {
       path: '/expenses'
       fullPath: '/expenses'
       preLoaderRoute: typeof ExpensesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eway': {
+      id: '/eway'
+      path: '/eway'
+      fullPath: '/eway'
+      preLoaderRoute: typeof EwayRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/customers': {
@@ -358,13 +418,16 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CustomersRoute: CustomersRoute,
+  EwayRoute: EwayRoute,
   ExpensesRoute: ExpensesRoute,
   Gstr1Route: Gstr1Route,
   Gstr3bRoute: Gstr3bRoute,
+  InventoryRoute: InventoryRoute,
   LoginRoute: LoginRoute,
   NotesRoute: NotesRoute,
   OnboardingRoute: OnboardingRoute,
   PaymentsRoute: PaymentsRoute,
+  PnlRoute: PnlRoute,
   ProductsRoute: ProductsRoute,
   QuotationsRoute: QuotationsRoute,
   RecurringRoute: RecurringRoute,

@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Plus, Trash2, UserPlus, Search } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Plus, Trash2, UserPlus } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import { AppLayout, PageHeader } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
 import { computeTotals, useStore, type LineItem } from "@/lib/store";
@@ -30,6 +31,18 @@ function NewInvoice() {
 
   const customer = customers.find((c) => c.id === customerId);
   const totals = useMemo(() => computeTotals(items, customer?.state, business.state), [items, customer, business.state]);
+
+  const warnedRef = useRef(false);
+  useEffect(() => {
+    if (totals.grand > 50000 && !warnedRef.current) {
+      warnedRef.current = true;
+      toast.warning("E-Way Bill threshold crossed", {
+        description: "Invoice value exceeds ₹50,000. An E-Way Bill will be required for transport.",
+        duration: 6000,
+      });
+    }
+    if (totals.grand <= 50000) warnedRef.current = false;
+  }, [totals.grand]);
 
   const updateItem = (idx: number, patch: Partial<LineItem>) =>
     setItems((x) => x.map((it, i) => (i === idx ? { ...it, ...patch } : it)));
