@@ -26,8 +26,16 @@ import { Route as EwayRouteImport } from './routes/eway'
 import { Route as CustomersRouteImport } from './routes/customers'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as InvoicesIndexRouteImport } from './routes/invoices.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as InvoicesNewRouteImport } from './routes/invoices.new'
 import { Route as InvoicesIdRouteImport } from './routes/invoices.$id'
+import { Route as AdminTenantsRouteImport } from './routes/admin.tenants'
+import { Route as AdminSupportRouteImport } from './routes/admin.support'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminPlansRouteImport } from './routes/admin.plans'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminBillingRouteImport } from './routes/admin.billing'
+import { Route as AdminTenantsIdRouteImport } from './routes/admin.tenants.$id'
 
 const StaffRoute = StaffRouteImport.update({
   id: '/staff',
@@ -114,6 +122,11 @@ const InvoicesIndexRoute = InvoicesIndexRouteImport.update({
   path: '/invoices/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InvoicesNewRoute = InvoicesNewRouteImport.update({
   id: '/invoices/new',
   path: '/invoices/new',
@@ -123,6 +136,41 @@ const InvoicesIdRoute = InvoicesIdRouteImport.update({
   id: '/invoices/$id',
   path: '/invoices/$id',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminTenantsRoute = AdminTenantsRouteImport.update({
+  id: '/admin/tenants',
+  path: '/admin/tenants',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSupportRoute = AdminSupportRouteImport.update({
+  id: '/admin/support',
+  path: '/admin/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/admin/settings',
+  path: '/admin/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminPlansRoute = AdminPlansRouteImport.update({
+  id: '/admin/plans',
+  path: '/admin/plans',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminBillingRoute = AdminBillingRouteImport.update({
+  id: '/admin/billing',
+  path: '/admin/billing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminTenantsIdRoute = AdminTenantsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminTenantsRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -142,9 +190,17 @@ export interface FileRoutesByFullPath {
   '/quotations': typeof QuotationsRoute
   '/recurring': typeof RecurringRoute
   '/staff': typeof StaffRoute
+  '/admin/billing': typeof AdminBillingRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/plans': typeof AdminPlansRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/support': typeof AdminSupportRoute
+  '/admin/tenants': typeof AdminTenantsRouteWithChildren
   '/invoices/$id': typeof InvoicesIdRoute
   '/invoices/new': typeof InvoicesNewRoute
+  '/admin/': typeof AdminIndexRoute
   '/invoices/': typeof InvoicesIndexRoute
+  '/admin/tenants/$id': typeof AdminTenantsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -163,9 +219,17 @@ export interface FileRoutesByTo {
   '/quotations': typeof QuotationsRoute
   '/recurring': typeof RecurringRoute
   '/staff': typeof StaffRoute
+  '/admin/billing': typeof AdminBillingRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/plans': typeof AdminPlansRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/support': typeof AdminSupportRoute
+  '/admin/tenants': typeof AdminTenantsRouteWithChildren
   '/invoices/$id': typeof InvoicesIdRoute
   '/invoices/new': typeof InvoicesNewRoute
+  '/admin': typeof AdminIndexRoute
   '/invoices': typeof InvoicesIndexRoute
+  '/admin/tenants/$id': typeof AdminTenantsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -185,9 +249,17 @@ export interface FileRoutesById {
   '/quotations': typeof QuotationsRoute
   '/recurring': typeof RecurringRoute
   '/staff': typeof StaffRoute
+  '/admin/billing': typeof AdminBillingRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/plans': typeof AdminPlansRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/support': typeof AdminSupportRoute
+  '/admin/tenants': typeof AdminTenantsRouteWithChildren
   '/invoices/$id': typeof InvoicesIdRoute
   '/invoices/new': typeof InvoicesNewRoute
+  '/admin/': typeof AdminIndexRoute
   '/invoices/': typeof InvoicesIndexRoute
+  '/admin/tenants/$id': typeof AdminTenantsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -208,9 +280,17 @@ export interface FileRouteTypes {
     | '/quotations'
     | '/recurring'
     | '/staff'
+    | '/admin/billing'
+    | '/admin/login'
+    | '/admin/plans'
+    | '/admin/settings'
+    | '/admin/support'
+    | '/admin/tenants'
     | '/invoices/$id'
     | '/invoices/new'
+    | '/admin/'
     | '/invoices/'
+    | '/admin/tenants/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -229,9 +309,17 @@ export interface FileRouteTypes {
     | '/quotations'
     | '/recurring'
     | '/staff'
+    | '/admin/billing'
+    | '/admin/login'
+    | '/admin/plans'
+    | '/admin/settings'
+    | '/admin/support'
+    | '/admin/tenants'
     | '/invoices/$id'
     | '/invoices/new'
+    | '/admin'
     | '/invoices'
+    | '/admin/tenants/$id'
   id:
     | '__root__'
     | '/'
@@ -250,9 +338,17 @@ export interface FileRouteTypes {
     | '/quotations'
     | '/recurring'
     | '/staff'
+    | '/admin/billing'
+    | '/admin/login'
+    | '/admin/plans'
+    | '/admin/settings'
+    | '/admin/support'
+    | '/admin/tenants'
     | '/invoices/$id'
     | '/invoices/new'
+    | '/admin/'
     | '/invoices/'
+    | '/admin/tenants/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -272,8 +368,15 @@ export interface RootRouteChildren {
   QuotationsRoute: typeof QuotationsRoute
   RecurringRoute: typeof RecurringRoute
   StaffRoute: typeof StaffRoute
+  AdminBillingRoute: typeof AdminBillingRoute
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminPlansRoute: typeof AdminPlansRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminSupportRoute: typeof AdminSupportRoute
+  AdminTenantsRoute: typeof AdminTenantsRouteWithChildren
   InvoicesIdRoute: typeof InvoicesIdRoute
   InvoicesNewRoute: typeof InvoicesNewRoute
+  AdminIndexRoute: typeof AdminIndexRoute
   InvoicesIndexRoute: typeof InvoicesIndexRoute
 }
 
@@ -398,6 +501,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InvoicesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/invoices/new': {
       id: '/invoices/new'
       path: '/invoices/new'
@@ -412,8 +522,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InvoicesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/tenants': {
+      id: '/admin/tenants'
+      path: '/admin/tenants'
+      fullPath: '/admin/tenants'
+      preLoaderRoute: typeof AdminTenantsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/support': {
+      id: '/admin/support'
+      path: '/admin/support'
+      fullPath: '/admin/support'
+      preLoaderRoute: typeof AdminSupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/plans': {
+      id: '/admin/plans'
+      path: '/admin/plans'
+      fullPath: '/admin/plans'
+      preLoaderRoute: typeof AdminPlansRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/billing': {
+      id: '/admin/billing'
+      path: '/admin/billing'
+      fullPath: '/admin/billing'
+      preLoaderRoute: typeof AdminBillingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/tenants/$id': {
+      id: '/admin/tenants/$id'
+      path: '/$id'
+      fullPath: '/admin/tenants/$id'
+      preLoaderRoute: typeof AdminTenantsIdRouteImport
+      parentRoute: typeof AdminTenantsRoute
+    }
   }
 }
+
+interface AdminTenantsRouteChildren {
+  AdminTenantsIdRoute: typeof AdminTenantsIdRoute
+}
+
+const AdminTenantsRouteChildren: AdminTenantsRouteChildren = {
+  AdminTenantsIdRoute: AdminTenantsIdRoute,
+}
+
+const AdminTenantsRouteWithChildren = AdminTenantsRoute._addFileChildren(
+  AdminTenantsRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -432,20 +603,17 @@ const rootRouteChildren: RootRouteChildren = {
   QuotationsRoute: QuotationsRoute,
   RecurringRoute: RecurringRoute,
   StaffRoute: StaffRoute,
+  AdminBillingRoute: AdminBillingRoute,
+  AdminLoginRoute: AdminLoginRoute,
+  AdminPlansRoute: AdminPlansRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminSupportRoute: AdminSupportRoute,
+  AdminTenantsRoute: AdminTenantsRouteWithChildren,
   InvoicesIdRoute: InvoicesIdRoute,
   InvoicesNewRoute: InvoicesNewRoute,
+  AdminIndexRoute: AdminIndexRoute,
   InvoicesIndexRoute: InvoicesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
