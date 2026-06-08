@@ -9,7 +9,7 @@ export type Customer = {
   gstin?: string;
   phone: string;
   email?: string;
-  state: string; // "Maharashtra - 27"
+  state: string;
   address: string;
 };
 
@@ -19,6 +19,8 @@ export type Product = {
   sku: string;
   hsn: string;
   price: number;
+  avgCost: number;
+  stock: number;
   unit: string;
   gst: number;
 };
@@ -44,11 +46,20 @@ export type Payment = {
   note?: string;
 };
 
+export type EInvoice = { irn: string; ackNo: string; ackDate: string };
+export type EWayBill = {
+  number: string;
+  vehicle: string;
+  mode: "Road" | "Rail" | "Air" | "Ship";
+  transporter: string;
+  date: string;
+};
+
 export type Invoice = {
   id: string;
   number: string;
   kind: InvoiceKind;
-  refInvoice?: string; // for notes
+  refInvoice?: string;
   customerId: string;
   date: string;
   dueDate: string;
@@ -57,6 +68,8 @@ export type Invoice = {
   payments: Payment[];
   status: InvoiceStatus;
   createdBy: string;
+  eInvoice?: EInvoice;
+  eWayBill?: EWayBill;
 };
 
 export type Expense = {
@@ -68,6 +81,8 @@ export type Expense = {
   vendor: string;
   gstEligible: boolean;
   gstAmount?: number;
+  productId?: string;
+  qty?: number;
 };
 
 export type RecurringProfile = {
@@ -88,6 +103,15 @@ export type StaffMember = {
   email: string;
   role: Role;
   lastActive: string;
+};
+
+export type StockAdjustment = {
+  id: string;
+  productId: string;
+  delta: number;
+  reason: "Damaged Goods" | "Stock Audit Correction" | "Theft/Loss" | "Promotional Sample" | "Procurement" | "Sale";
+  date: string;
+  note?: string;
 };
 
 type Business = {
@@ -113,12 +137,16 @@ type Store = {
   addInvoice: (i: Omit<Invoice, "id" | "number" | "payments" | "status" | "createdBy" | "kind" | "refInvoice"> & { number?: string; kind?: InvoiceKind; refInvoice?: string }) => Invoice;
   updateInvoice: (id: string, patch: Partial<Invoice>) => void;
   recordPayment: (invoiceId: string, p: Omit<Payment, "id">) => void;
+  registerEInvoice: (invoiceId: string) => EInvoice;
+  attachEWayBill: (invoiceId: string, w: EWayBill) => void;
   expenses: Expense[];
   addExpense: (e: Omit<Expense, "id">) => void;
   recurring: RecurringProfile[];
   addRecurring: (r: Omit<RecurringProfile, "id">) => void;
   staff: StaffMember[];
   addStaff: (s: Omit<StaffMember, "id">) => void;
+  stockAdjustments: StockAdjustment[];
+  adjustStock: (a: Omit<StockAdjustment, "id">) => void;
   nextInvoiceNumber: (kind: InvoiceKind) => string;
 };
 
@@ -143,12 +171,12 @@ const seedCustomers: Customer[] = [
 ];
 
 const seedProducts: Product[] = [
-  { id: "p1", name: 'Havells 1.5mm Copper Wire (90m)', sku: "HVL-WIRE-15", hsn: "8544", price: 2890, unit: "Roll", gst: 18 },
-  { id: "p2", name: "Anchor Modular Switch 6A", sku: "ANC-SW-6A", hsn: "8536", price: 75, unit: "Pcs", gst: 18 },
-  { id: "p3", name: "Philips LED Bulb 9W", sku: "PHL-LED-9", hsn: "8539", price: 110, unit: "Pcs", gst: 12 },
-  { id: "p4", name: "Crompton Ceiling Fan 1200mm", sku: "CRP-FAN-12", hsn: "8414", price: 2450, unit: "Pcs", gst: 18 },
-  { id: "p5", name: "Polycab MCB 32A Single Pole", sku: "PLC-MCB-32", hsn: "8536", price: 220, unit: "Pcs", gst: 18 },
-  { id: "p6", name: "Finolex PVC Conduit 25mm", sku: "FNX-PVC-25", hsn: "3917", price: 95, unit: "Mtr", gst: 18 },
+  { id: "p1", name: 'Havells 1.5mm Copper Wire (90m)', sku: "HVL-WIRE-15", hsn: "8544", price: 2890, avgCost: 2150, stock: 42, unit: "Roll", gst: 18 },
+  { id: "p2", name: "Anchor Modular Switch 6A", sku: "ANC-SW-6A", hsn: "8536", price: 75, avgCost: 48, stock: 320, unit: "Pcs", gst: 18 },
+  { id: "p3", name: "Philips LED Bulb 9W", sku: "PHL-LED-9", hsn: "8539", price: 110, avgCost: 72, stock: 8, unit: "Pcs", gst: 12 },
+  { id: "p4", name: "Crompton Ceiling Fan 1200mm", sku: "CRP-FAN-12", hsn: "8414", price: 2450, avgCost: 1820, stock: 11, unit: "Pcs", gst: 18 },
+  { id: "p5", name: "Polycab MCB 32A Single Pole", sku: "PLC-MCB-32", hsn: "8536", price: 220, avgCost: 145, stock: 96, unit: "Pcs", gst: 18 },
+  { id: "p6", name: "Finolex PVC Conduit 25mm", sku: "FNX-PVC-25", hsn: "3917", price: 95, avgCost: 62, stock: 540, unit: "Mtr", gst: 18 },
 ];
 
 function makeInvoiceItems(items: { p: Product; qty: number }[]): LineItem[] {
@@ -203,6 +231,23 @@ const seedStaff: StaffMember[] = [
   { id: "s3", name: "Rahul Pawar", email: "rahul@sharmatraders.in", role: "Staff", lastActive: "yesterday" },
 ];
 
+function rand(len: number, chars = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789") {
+  let s = "";
+  for (let i = 0; i < len; i++) s += chars[Math.floor(Math.random() * chars.length)];
+  return s;
+}
+
+export function generateIRN(): string {
+  return Array.from({ length: 64 }, () => "abcdef0123456789"[Math.floor(Math.random() * 16)]).join("");
+}
+
+export function generateEWayNumber(): string {
+  // 12 digits
+  let n = "";
+  for (let i = 0; i < 12; i++) n += Math.floor(Math.random() * 10);
+  return n;
+}
+
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [business, setBusiness] = useState(initialBusiness);
   const [currentRole, setCurrentRole] = useState<Role>("Owner");
@@ -219,11 +264,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     },
   ]);
   const [staff, setStaff] = useState<StaffMember[]>(seedStaff);
+  const [stockAdjustments, setStockAdjustments] = useState<StockAdjustment[]>([]);
   const [invSeq, setInvSeq] = useState({ invoice: 412, quotation: 88, credit_note: 12, debit_note: 4 });
 
   const nextInvoiceNumber = (kind: InvoiceKind) => {
     const prefix = kind === "invoice" ? "ST/26-27/" : kind === "quotation" ? "QT/26-27/" : kind === "credit_note" ? "CN/26-27/" : "DN/26-27/";
     return prefix + String(invSeq[kind]).padStart(4, "0");
+  };
+
+  const applyStockDelta = (productId: string | undefined, delta: number) => {
+    if (!productId) return;
+    setProducts((x) => x.map((p) => (p.id === productId ? { ...p, stock: Math.max(0, p.stock + delta) } : p)));
   };
 
   const value = useMemo<Store>(() => ({
@@ -251,6 +302,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       };
       setInvoices((x) => [inv, ...x]);
       setInvSeq((s) => ({ ...s, [kind]: s[kind] + 1 }));
+      // Deplete stock for tax invoices only
+      if (kind === "invoice") {
+        i.items.forEach((it) => {
+          if (it.productId) {
+            applyStockDelta(it.productId, -it.qty);
+            setStockAdjustments((x) => [{ id: "sa" + Date.now() + Math.random(), productId: it.productId!, delta: -it.qty, reason: "Sale", date: i.date, note: `Invoice ${number}` }, ...x]);
+          }
+        });
+      }
       return inv;
     },
     updateInvoice: (id, patch) => setInvoices((x) => x.map((i) => (i.id === id ? { ...i, ...patch } : i))),
@@ -268,15 +328,37 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         })
       );
     },
+    registerEInvoice: (invoiceId) => {
+      const irn = generateIRN();
+      const ackNo = String(Math.floor(1e11 + Math.random() * 9e11));
+      const eInv: EInvoice = { irn, ackNo, ackDate: today() };
+      setInvoices((x) => x.map((i) => (i.id === invoiceId ? { ...i, eInvoice: eInv } : i)));
+      return eInv;
+    },
+    attachEWayBill: (invoiceId, w) => setInvoices((x) => x.map((i) => (i.id === invoiceId ? { ...i, eWayBill: w } : i))),
     expenses,
-    addExpense: (e) => setExpenses((x) => [{ ...e, id: "e" + Date.now() }, ...x]),
+    addExpense: (e) => {
+      setExpenses((x) => [{ ...e, id: "e" + Date.now() }, ...x]);
+      if (e.category === "Stock Purchase" && e.productId && e.qty) {
+        applyStockDelta(e.productId, e.qty);
+        setStockAdjustments((x) => [{ id: "sa" + Date.now(), productId: e.productId!, delta: e.qty!, reason: "Procurement", date: e.date, note: e.vendor }, ...x]);
+      }
+    },
     recurring,
     addRecurring: (r) => setRecurring((x) => [...x, { ...r, id: "r" + Date.now() }]),
     staff,
     addStaff: (s) => setStaff((x) => [...x, { ...s, id: "s" + Date.now() }]),
+    stockAdjustments,
+    adjustStock: (a) => {
+      setStockAdjustments((x) => [{ ...a, id: "sa" + Date.now() }, ...x]);
+      applyStockDelta(a.productId, a.delta);
+    },
     nextInvoiceNumber,
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [business, currentRole, customers, products, invoices, expenses, recurring, staff, invSeq]);
+  }), [business, currentRole, customers, products, invoices, expenses, recurring, staff, stockAdjustments, invSeq]);
+
+  // unused helper guard
+  void rand;
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }
