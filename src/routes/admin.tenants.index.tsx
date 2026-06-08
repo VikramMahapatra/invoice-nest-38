@@ -5,7 +5,7 @@ import { tenants, type TenantStatus } from "@/lib/adminData";
 import { Button } from "@/components/ui/button";
 import { Download, Filter, Plus, Search } from "lucide-react";
 
-export const Route = createFileRoute("/admin/tenants")({
+export const Route = createFileRoute("/admin/tenants/")({
   head: () => ({ meta: [{ title: "Tenants · BillKhata Admin" }] }),
   component: TenantsPage,
 });
