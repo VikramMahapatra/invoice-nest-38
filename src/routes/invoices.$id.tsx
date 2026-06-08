@@ -166,8 +166,33 @@ function InvoiceView() {
                     <div className="text-sm font-medium">{fmtDate(inv.date)}</div>
                     {!isQuotation && <><div className="mt-3 text-xs text-zinc-500">Due</div><div className="text-sm font-medium">{fmtDate(inv.dueDate)}</div></>}
                     {isNote && inv.refInvoice && <><div className="mt-3 text-xs text-zinc-500">Against Invoice</div><div className="text-sm font-mono font-medium">{inv.refInvoice}</div></>}
+                    {inv.eInvoice && (
+                      <div className="mt-3 flex justify-end">
+                        <QrMock value={inv.eInvoice.irn} size={104} className="border border-zinc-200 rounded" />
+                      </div>
+                    )}
                   </div>
                 </div>
+
+                {inv.eInvoice && (
+                  <div className="mt-6 p-3 border border-zinc-200 rounded bg-zinc-50 text-xs">
+                    <div className="font-semibold text-zinc-700 uppercase tracking-wider text-[10px] mb-1">e-Invoice Authentication Details</div>
+                    <div className="grid sm:grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 font-mono">
+                      <span className="text-zinc-500">IRN</span><span className="break-all">{inv.eInvoice.irn}</span>
+                      <span className="text-zinc-500">Ack No</span><span>{inv.eInvoice.ackNo}</span>
+                      <span className="text-zinc-500">Ack Date</span><span>{inv.eInvoice.ackDate}</span>
+                    </div>
+                  </div>
+                )}
+
+                {inv.eWayBill && (
+                  <div className="mt-3 p-3 border border-zinc-200 rounded bg-zinc-50 text-xs flex items-center justify-between">
+                    <div>
+                      <div className="font-semibold text-zinc-700 uppercase tracking-wider text-[10px] mb-0.5">E-Way Bill</div>
+                      <div className="font-mono">EBN {inv.eWayBill.number} · {inv.eWayBill.mode} · {inv.eWayBill.vehicle}</div>
+                    </div>
+                  </div>
+                )}
 
                 <div className="grid sm:grid-cols-2 gap-6 mt-8 pt-6 border-t">
                   <div>
