@@ -1,0 +1,17 @@
+1. Check which Vite executable is being blocked
+In your existing VS Code PowerShell terminal, run:
+Get-Command node.exe, npm.cmd -ErrorAction SilentlyContinue
+
+
+Then:
+Test-Path .\frontend\node_modules\.bin\vite.cmd
+
+
+If it returns True, inspect the Vite launcher:
+Get-Content .\frontend\node_modules\.bin\vite.cmd -TotalCount 20
+
+
+This will help us identify what Windows is trying to execute.
+2. Test whether Node.js can run Vite directly
+Run:
+node .\frontend\node_modules\vite\bin\vite.js --host 127.0.0.1
